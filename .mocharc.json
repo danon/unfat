@@ -1,0 +1,9 @@
+{
+  "extension": "ts",
+  "require": [
+    "./test/mocha/typescript.esModule.js"
+  ],
+  "spec": [
+    "test/unit/*.test.ts"
+  ]
+}
