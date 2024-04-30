@@ -4,6 +4,6 @@
     "./test/mocha/typescript.esModule.js"
   ],
   "spec": [
-    "test/unit/*.test.ts"
+    "test/**/*.test.ts"
   ]
 }

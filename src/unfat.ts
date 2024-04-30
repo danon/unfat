@@ -1,7 +1,26 @@
 export class History {
-  currentCalories: number = 0;
+  private calories: { [key: number]: number } = {};
 
-  addMeal(name: string, weight: number, caloriesPer100Grams: number): void {
-    this.currentCalories += Math.round(weight / 100 * caloriesPer100Grams);
+  constructor(private calendar: Calendar) {
   }
+
+  addMeal(name: string, caloriesPer100Grams: number, weight: number): void {
+    this.increaseCalories(Math.round(weight / 100 * caloriesPer100Grams));
+  }
+
+  private increaseCalories(newCalories: number): void {
+    this.calories[this.calendar.day()] = this.currentCalories + newCalories;
+  }
+
+  get currentCalories(): number {
+    return this.calories[this.calendar.day()] || 0;
+  }
+
+  get days(): number[] {
+    return Object.values(this.calories);
+  }
+}
+
+export interface Calendar {
+  day(): number;
 }
