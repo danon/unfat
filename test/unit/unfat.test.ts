@@ -59,6 +59,10 @@ suite('unit/', () => {
       test('days calories', () => {
         assert.deepEqual(twoDayHistory().days, [54, 175]);
       });
+
+      test('week average calories', () => {
+        assert.deepEqual(twoDayHistory().week, 114.5);
+      });
     });
   });
 });

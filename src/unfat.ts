@@ -19,6 +19,14 @@ export class History {
   get days(): number[] {
     return Object.values(this.calories);
   }
+
+  get week(): number {
+    return average(this.days);
+  }
+}
+
+function average(numbers: number[]): number {
+  return numbers.reduce((a, b) => a + b, 0) / numbers.length;
 }
 
 export interface Calendar {
