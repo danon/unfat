@@ -6,7 +6,7 @@ import {TestCalendar} from "../fixture/calendar.js";
 
 suite('unit/', () => {
   suite('history', () => {
-    suite('meals and calories', () => {
+    suite('calories', () => {
       function newHistory() {
         return new History(new TestCalendar());
       }
@@ -92,6 +92,16 @@ suite('unit/', () => {
           calendar.nextDay();
         });
       }
+    });
+
+    test('meals', () => {
+      const history = new History(new TestCalendar());
+      history.addMeal('apple', 52, 50);
+      history.addMeal('banana', 70, 150);
+      assert.deepEqual(history.meals, [
+        {name: 'apple', calories: 26},
+        {name: 'banana', calories: 105},
+      ]);
     });
   });
 });

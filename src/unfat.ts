@@ -1,11 +1,18 @@
 export class History {
-  private calories: Map<number, number> = new Map();
+  public readonly meals: Meal[] = new Array();
+  private readonly calories: Map<number, number> = new Map();
 
   constructor(private calendar: Calendar) {
   }
 
   addMeal(name: string, caloriesPer100Grams: number, weight: number): void {
-    this.increaseCalories(Math.round(weight / 100 * caloriesPer100Grams));
+    const calories = this.mealCalories(weight, caloriesPer100Grams);
+    this.increaseCalories(calories);
+    this.meals.push({name, calories});
+  }
+
+  private mealCalories(weight: number, caloriesPer100Grams: number): number {
+    return Math.round(weight / 100 * caloriesPer100Grams);
   }
 
   private increaseCalories(newCalories: number): void {
@@ -23,6 +30,11 @@ export class History {
   get weeks(): number[] {
     return chunks(this.days, 7).map(average);
   }
+}
+
+interface Meal {
+  name: string;
+  calories: number;
 }
 
 function chunks<T>(array: T[], size: number): T[][] {
