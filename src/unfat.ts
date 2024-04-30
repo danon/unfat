@@ -1,5 +1,5 @@
 export class History {
-  private calories: { [key: number]: number } = {};
+  private calories: Map<number, number> = new Map();
 
   constructor(private calendar: Calendar) {
   }
@@ -9,15 +9,15 @@ export class History {
   }
 
   private increaseCalories(newCalories: number): void {
-    this.calories[this.calendar.day()] = this.currentCalories + newCalories;
+    this.calories.set(this.calendar.day(), this.currentCalories + newCalories);
   }
 
   get currentCalories(): number {
-    return this.calories[this.calendar.day()] || 0;
+    return this.calories.get(this.calendar.day()) || 0;
   }
 
   get days(): number[] {
-    return Object.values(this.calories);
+    return Array.from(this.calories.values());
   }
 
   get weeks(): number[] {
