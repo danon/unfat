@@ -42,7 +42,7 @@ suite('unit/', () => {
       });
     });
 
-    suite('dates', () => {
+    suite('days', () => {
       function twoDayHistory() {
         const calendar = new TestCalendar();
         const history = new History(calendar);
@@ -61,8 +61,37 @@ suite('unit/', () => {
       });
 
       test('week average calories', () => {
-        assert.deepEqual(twoDayHistory().week, 114.5);
+        assert.deepEqual(twoDayHistory().weeks[0], 114.5);
       });
+    });
+
+    suite('dates', () => {
+      test('separate weeks', () => {
+        const calendar = new TestCalendar();
+        const history = new History(calendar);
+        caloriesEachDay(history, calendar, [
+          122, 121, 123, 121, 123, 121, 123,
+          340, 339, 341, 339, 341, 339, 341,
+        ]);
+        assert.deepEqual(history.weeks, [122, 340]);
+      });
+
+      test('not rolling weeks', () => {
+        const calendar = new TestCalendar();
+        const history = new History(calendar);
+        caloriesEachDay(history, calendar, [
+          122, 121, 123, 121, 123, 121, 123,
+          340,
+        ]);
+        assert.deepEqual(history.weeks, [122, 340]);
+      });
+
+      function caloriesEachDay(history: History, calendar: TestCalendar, days: number[]): void {
+        days.forEach(calories => {
+          history.addMeal('juice', calories, 100);
+          calendar.nextDay();
+        });
+      }
     });
   });
 });

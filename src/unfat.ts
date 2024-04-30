@@ -20,9 +20,17 @@ export class History {
     return Object.values(this.calories);
   }
 
-  get week(): number {
-    return average(this.days);
+  get weeks(): number[] {
+    return chunks(this.days, 7).map(average);
   }
+}
+
+function chunks<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
 }
 
 function average(numbers: number[]): number {
