@@ -2,6 +2,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@riddled/mocha-rebase-suite": "^0.0.17",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.12.7",
     "@types/selenium-webdriver": "^4.1.22",

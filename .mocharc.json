@@ -1,7 +1,8 @@
 {
   "extension": "ts",
   "require": [
-    "./test/mocha/typescript.esModule.js"
+    "./test/mocha/typescript.esModule.js",
+    "@riddled/mocha-rebase-suite"
   ],
   "spec": [
     "test/**/*.test.ts"
