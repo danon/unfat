@@ -24,3 +24,13 @@ function createDirectory(path: string): void {
 export function fileExists(path: string): boolean {
   return fs.existsSync(path);
 }
+
+export function writeMany(path: string, children: Children): void {
+  for (const [name, content] of Object.entries(children)) {
+    write(join(path, name), content);
+  }
+}
+
+export interface Children {
+  [key: string]: string;
+}

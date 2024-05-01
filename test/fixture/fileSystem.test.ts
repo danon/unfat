@@ -3,7 +3,7 @@ import {strict as assert} from "node:assert";
 import fs from "node:fs";
 import {join} from "node:path";
 
-import {fileExists, read, tmpDirectory, write} from "./fileSystem.js";
+import {fileExists, read, tmpDirectory, write, writeMany} from "./fileSystem.js";
 
 suite('fixture/', () => {
   suite('file system', () => {
@@ -51,6 +51,18 @@ suite('fixture/', () => {
         const path = existingFile('foo');
         // when, then
         assert.equal(read(path), 'foo');
+      });
+    });
+
+    suite('createMany', () => {
+      test('createMany', () => {
+        // given
+        const path = tmpDirectory();
+        // when
+        writeMany(path, {'a.txt': 'a', 'b.txt': 'b'});
+        // then
+        assertFileExistsWithContent(join(path, 'a.txt'), 'a');
+        assertFileExistsWithContent(join(path, 'b.txt'), 'b');
       });
     });
   });

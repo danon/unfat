@@ -1,12 +1,13 @@
 import {suite, test} from "mocha";
 
 import {strict as assert} from "node:assert";
+import * as fs from "node:fs";
 import {join} from "node:path";
 
 import {Driver} from "./driver.js";
-import {fileExists, read, tmpDirectory, write} from "./fileSystem.js";
+import {type Children, fileExists, read, tmpDirectory, writeMany} from "./fileSystem.js";
 import {type Files, startServer} from "./httpServer.js";
-import {typescriptInWebpage} from "./typescript.js";
+import {javascriptInWebpage, typescriptInWebpage} from "./typescript.js";
 
 suite('fixture/', () => {
   suite('typescript', () => {
@@ -21,16 +22,42 @@ suite('fixture/', () => {
 
     test('creates index.html', async function () {
       this.timeout(8000);
-      const publicDirectory = await typescriptInWebpageFile('');
+      const publicDirectory = await javascriptInWebpageFiles({'file.js': ''}, 'file.js');
       assert(fileExists(join(publicDirectory, 'index.html')));
+    });
+
+    test('import javascript', async function () {
+      this.timeout(8000);
+      const publicDirectory = await javascriptInWebpageFiles(
+        {
+          'file.ts': 'import {value} from "./other.js"; localStorage.setItem("value", value);',
+          'other.js': "export const value='bar';",
+        },
+        'file.ts',
+      );
+      assert.equal(
+        await executeInWebpage(publicDirectory, "return localStorage.getItem('value');"),
+        'bar',
+      );
     });
   });
 });
 
 async function typescriptInWebpageFile(typescript: string): Promise<string> {
-  const dir: string = tmpDirectory();
-  write(join(dir, 'file.ts'), typescript);
+  const dir = directoryFiles({'file.ts': typescript});
   typescriptInWebpage(join(dir, 'file.ts'));
+  return dir;
+}
+
+async function javascriptInWebpageFiles(fileSystem: Children, inputFilename: string): Promise<string> {
+  const dir = directoryFiles(fileSystem);
+  await javascriptInWebpage(join(dir, inputFilename));
+  return dir;
+}
+
+function directoryFiles(fileSystem: Children): string {
+  const dir: string = tmpDirectory();
+  writeMany(dir, fileSystem);
   return dir;
 }
 
@@ -49,5 +76,9 @@ async function executeInWebpage(publicDirectory: string, javaScriptInRuntime: st
 }
 
 function webpageFiles(path: string): Files {
-  return {'/': read(join(path, 'index.html'))};
+  const files: Files = {};
+  for (const fileName of fs.readdirSync(path)) {
+    files['/' + fileName] = read(join(path, fileName));
+  }
+  return {'/': files['/index.html'], ...files};
 }

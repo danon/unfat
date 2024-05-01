@@ -1,5 +1,7 @@
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import fs from "node:fs";
 import {dirname, join} from "node:path";
+import webpack from "webpack";
 
 export function typescriptInWebpage(fileName: string): void {
   const tsCode = JSON.stringify(read(fileName));
@@ -20,4 +22,15 @@ function read(path: string): string {
 
 function write(path: string, content: string): void {
   fs.writeFileSync(path, content);
+}
+
+export async function javascriptInWebpage(fileName: string): Promise<void> {
+  const compiler = webpack({
+    entry: fileName,
+    output: {path: dirname(fileName)},
+    plugins: [
+      new HtmlWebpackPlugin({templateContent: ''}),
+    ],
+  });
+  return new Promise(resolve => compiler.run(() => resolve()));
 }
