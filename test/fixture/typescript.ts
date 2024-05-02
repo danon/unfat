@@ -1,9 +1,9 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import {dirname, join} from "node:path";
-import {fileURLToPath} from "node:url";
+import {dirname} from "node:path";
 import webpack from "webpack";
 
 import {fileExists} from "./fileSystem.js";
+import {projectPath} from "./project.js";
 
 export async function typescriptInWebpage(fileName: string): Promise<void> {
   if (!fileExists(fileName)) {
@@ -21,14 +21,10 @@ export async function typescriptInWebpage(fileName: string): Promise<void> {
         {
           test: /\.ts$/,
           loader: 'ts-loader',
-          options: {configFile: tsconfigFilename()},
+          options: {configFile: projectPath('tsconfig.json')},
         },
       ],
     },
   });
   return await new Promise(resolve => compiler.run(() => resolve()));
-}
-
-function tsconfigFilename(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), '../../tsconfig.json');
 }
