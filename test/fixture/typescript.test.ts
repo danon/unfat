@@ -7,7 +7,7 @@ import {join} from "node:path";
 import {Driver} from "./driver.js";
 import {type Children, fileExists, read, tmpDirectory, writeMany} from "./fileSystem.js";
 import {type Files, startServer} from "./httpServer.js";
-import {javascriptInWebpage, typescriptInWebpage} from "./typescript.js";
+import {typescriptInWebpage} from "./typescript.js";
 
 suite('fixture/', () => {
   suite('typescript', () => {
@@ -22,16 +22,16 @@ suite('fixture/', () => {
 
     test('creates index.html', async function () {
       this.timeout(8000);
-      const publicDirectory = await javascriptInWebpageFiles({'file.js': ''}, 'file.js');
+      const publicDirectory = await typescriptInWebpageFiles({'file.js': ''}, 'file.js');
       assert(fileExists(join(publicDirectory, 'index.html')));
     });
 
-    test('import javascript', async function () {
+    test('import typescript', async function () {
       this.timeout(8000);
-      const publicDirectory = await javascriptInWebpageFiles(
+      const publicDirectory = await typescriptInWebpageFiles(
         {
-          'file.ts': 'import {value} from "./other.js"; localStorage.setItem("value", value);',
-          'other.js': "export const value='bar';",
+          'file.ts': 'import {value} from "./other.js";  localStorage.setItem("value", value);',
+          'other.ts': "export const value='bar' as string;",
         },
         'file.ts',
       );
@@ -43,15 +43,13 @@ suite('fixture/', () => {
   });
 });
 
-async function typescriptInWebpageFile(typescript: string): Promise<string> {
-  const dir = directoryFiles({'file.ts': typescript});
-  typescriptInWebpage(join(dir, 'file.ts'));
-  return dir;
+function typescriptInWebpageFile(typescript: string): Promise<string> {
+  return typescriptInWebpageFiles({'file.ts': typescript}, 'file.ts');
 }
 
-async function javascriptInWebpageFiles(fileSystem: Children, inputFilename: string): Promise<string> {
+async function typescriptInWebpageFiles(fileSystem: Children, inputFilename: string): Promise<string> {
   const dir = directoryFiles(fileSystem);
-  await javascriptInWebpage(join(dir, inputFilename));
+  await typescriptInWebpage(join(dir, inputFilename));
   return dir;
 }
 

@@ -3,7 +3,8 @@
     "strict": true,
     "module": "NodeNext",
     "lib": [
-      "ES2021.Promise"
+      "ES2021.Promise",
+      "DOM"
     ]
   }
 }
