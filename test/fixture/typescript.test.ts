@@ -29,22 +29,24 @@ suite('fixture/', () => {
 
     test('import typescript', async function () {
       this.timeout(8000);
-      const publicDirectory = await typescriptInWebpageFiles(
-        {
-          'file.ts': 'import {value} from "./other.js";  localStorage.setItem("value", value);',
-          'other.ts': "export const value='bar' as string;",
-        },
-        'file.ts',
-      );
+      // given
+      const dir: string = tmpDirectory();
+      writeMany(join(dir, 'input'), {
+        'file.ts': 'import {value} from "./other.js";  localStorage.setItem("value", value);',
+        'other.ts': "export const value='bar' as string;",
+      });
+      // when
+      await typescriptInWebpage(join(dir, 'input', 'file.ts'), join(dir, 'dist'));
+      // then
       assert.equal(
-        await executeInWebpage(publicDirectory, "return localStorage.getItem('value');"),
+        await executeInWebpage(join(dir, 'dist'), "return localStorage.getItem('value');"),
         'bar',
       );
     });
 
     test('missing file', async function () {
       assert.equal(
-        await caught(typescriptInWebpage('/missing/file.fs')),
+        await caught(typescriptInWebpage('/missing/file.fs', '')),
         'Failed to transpile file: /missing/file.fs',
       );
     });
@@ -57,7 +59,7 @@ function typescriptInWebpageFile(typescript: string): Promise<string> {
 
 async function typescriptInWebpageFiles(fileSystem: Children, inputFilename: string): Promise<string> {
   const dir = directoryFiles(fileSystem);
-  await typescriptInWebpage(join(dir, inputFilename));
+  await typescriptInWebpage(join(dir, inputFilename), dir);
   return dir;
 }
 
