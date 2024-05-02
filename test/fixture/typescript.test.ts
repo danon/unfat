@@ -1,13 +1,12 @@
 import {suite, test} from "mocha";
 
 import {strict as assert} from "node:assert";
-import * as fs from "node:fs";
 import {join} from "node:path";
 
 import {caught} from "./caught.js";
 import {Driver} from "./driver.js";
-import {type Children, fileExists, read, tmpDirectory, writeMany} from "./fileSystem.js";
-import {type Files, startServer} from "./httpServer.js";
+import {type Children, fileExists, tmpDirectory, writeMany} from "./fileSystem.js";
+import {startServerFiles} from "./httpServer.js";
 import {typescriptInWebpage} from "./typescript.js";
 
 suite('fixture/', () => {
@@ -70,7 +69,7 @@ function directoryFiles(fileSystem: Children): string {
 }
 
 async function executeInWebpage(publicDirectory: string, javaScriptInRuntime: string): Promise<unknown> {
-  const server = await startServer(webpageFiles(publicDirectory));
+  const server = await startServerFiles(publicDirectory);
   const driver = new Driver(4000);
   try {
     await driver.openPage('http://localhost:' + server.port + '/');
@@ -81,12 +80,4 @@ async function executeInWebpage(publicDirectory: string, javaScriptInRuntime: st
       server.close(),
     ]);
   }
-}
-
-function webpageFiles(path: string): Files {
-  const files: Files = {};
-  for (const fileName of fs.readdirSync(path)) {
-    files['/' + fileName] = read(join(path, fileName));
-  }
-  return {'/': files['/index.html'], ...files};
 }

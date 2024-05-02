@@ -1,7 +1,27 @@
+import fs from "node:fs";
 import {createServer, type IncomingMessage, type Server as NodeServer, type ServerResponse} from "node:http";
 import type {AddressInfo} from "node:net";
+import {join} from "node:path";
+
+import {read} from "./fileSystem.js";
 
 type HttpServer = NodeServer<typeof IncomingMessage, typeof ServerResponse>;
+
+export function startServerFiles(path: string): Promise<Server> {
+  const files = children(path);
+  return startServer({
+    '/': files['/index.html'],
+    ...files,
+  });
+}
+
+function children(path: string): Files {
+  const files: Files = {};
+  for (const fileName of fs.readdirSync(path)) {
+    files['/' + fileName] = read(join(path, fileName));
+  }
+  return files;
+}
 
 export function startServer(files: Files): Promise<Server> {
   return new Promise(resolve => {

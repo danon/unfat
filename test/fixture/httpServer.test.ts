@@ -2,11 +2,13 @@ import {type Suite, suite, test} from "mocha";
 
 import {strict as assert} from "node:assert";
 import {type ClientRequest, get, type IncomingMessage} from "node:http";
+import {join} from "node:path";
+import {tmpDirectory, write} from "./fileSystem.js";
 
-import {type Files, Server, startServer} from "./httpServer.js";
+import {type Files, Server, startServer, startServerFiles} from "./httpServer.js";
 
 suite('fixture/', () => {
-  suite('http server', function (this: Suite): void {
+  suite('http server, in memory', function (this: Suite): void {
     this.timeout(10000);
 
     test('serve by path', async () => {
@@ -30,6 +32,24 @@ suite('fixture/', () => {
     test('serve as script', async () =>
       await assertContentType('/script.js', 'application/javascript'));
   });
+
+  suite('http server, from file system', function (this: Suite): void {
+    test('serve index.html', async () => {
+      // given
+      const directory = tmpDirectory();
+      write(join(directory, 'index.html'), 'foo');
+      // when, then
+      await assertFileContent(directory, '/', 'foo');
+    });
+
+    test('serve file.html', async () => {
+      // given
+      const directory = tmpDirectory();
+      write(join(directory, 'file.html'), 'foo');
+      // when, then
+      await assertFileContent(directory, '/file.html', 'foo');
+    });
+  });
 });
 
 async function assertContentType(path: string, expected: string): Promise<void> {
@@ -38,7 +58,15 @@ async function assertContentType(path: string, expected: string): Promise<void> 
 }
 
 async function fetch(files: Files, path: string): Promise<Response> {
-  const server: Server = await startServer(files);
+  return await fetchAndClose(await startServer(files), path);
+}
+
+async function assertFileContent(directory: string, path: string, expected: string): Promise<void> {
+  const response = await fetchAndClose(await startServerFiles(directory), path);
+  assert.equal(response.body, expected);
+}
+
+async function fetchAndClose(server: Server, path: string): Promise<Response> {
   try {
     return await httpGet('http://localhost:' + server.port + path);
   } finally {
