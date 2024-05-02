@@ -4,6 +4,7 @@ import {strict as assert} from "node:assert";
 import * as fs from "node:fs";
 import {join} from "node:path";
 
+import {caught} from "./caught.js";
 import {Driver} from "./driver.js";
 import {type Children, fileExists, read, tmpDirectory, writeMany} from "./fileSystem.js";
 import {type Files, startServer} from "./httpServer.js";
@@ -38,6 +39,13 @@ suite('fixture/', () => {
       assert.equal(
         await executeInWebpage(publicDirectory, "return localStorage.getItem('value');"),
         'bar',
+      );
+    });
+
+    test('missing file', async function () {
+      assert.equal(
+        await caught(typescriptInWebpage('/missing/file.fs')),
+        'Failed to transpile file: /missing/file.fs',
       );
     });
   });

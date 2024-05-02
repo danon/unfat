@@ -3,7 +3,12 @@ import {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import webpack from "webpack";
 
-export function typescriptInWebpage(fileName: string): Promise<void> {
+import {fileExists} from "./fileSystem.js";
+
+export async function typescriptInWebpage(fileName: string): Promise<void> {
+  if (!fileExists(fileName)) {
+    throw new Error('Failed to transpile file: ' + fileName);
+  }
   const compiler = webpack({
     entry: fileName,
     output: {path: dirname(fileName)},
@@ -21,7 +26,7 @@ export function typescriptInWebpage(fileName: string): Promise<void> {
       ],
     },
   });
-  return new Promise(resolve => compiler.run(() => resolve()));
+  return await new Promise(resolve => compiler.run(() => resolve()));
 }
 
 function tsconfigFilename(): string {
