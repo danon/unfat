@@ -5,7 +5,7 @@ import {History} from "../../src/unfat.js";
 import {TestCalendar} from "../fixture/calendar.js";
 
 suite('unit/', () => {
-  suite('history', () => {
+  suite('domain', () => {
     suite('calories', () => {
       function newHistory() {
         return new History(new TestCalendar());
