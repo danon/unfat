@@ -8,11 +8,15 @@ import {read} from "./fileSystem.js";
 type HttpServer = NodeServer<typeof IncomingMessage, typeof ServerResponse>;
 
 export function startServerFiles(path: string): Promise<Server> {
+  return startServer(resourcesIn(path));
+}
+
+function resourcesIn(path: string): Files {
   const files = children(path);
-  return startServer({
-    '/': files['/index.html'],
-    ...files,
-  });
+  if (files.hasOwnProperty('/index.html')) {
+    return {'/': files['/index.html'], ...files};
+  }
+  return files;
 }
 
 function children(path: string): Files {

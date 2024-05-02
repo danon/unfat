@@ -49,6 +49,13 @@ suite('fixture/', () => {
       // when, then
       await assertFileContent(directory, '/file.html', 'foo');
     });
+
+    test('missing index.html', async () => {
+      // given
+      const directory = tmpDirectory();
+      // when, then
+      await assertFileStatusCode(directory, '/', 404);
+    });
   });
 });
 
@@ -62,8 +69,17 @@ async function fetch(files: Files, path: string): Promise<Response> {
 }
 
 async function assertFileContent(directory: string, path: string, expected: string): Promise<void> {
-  const response = await fetchAndClose(await startServerFiles(directory), path);
+  const response = await requestFile(directory, path);
   assert.equal(response.body, expected);
+}
+
+async function assertFileStatusCode(directory: string, path: string, expected: number): Promise<void> {
+  const response = await requestFile(directory, path);
+  assert.equal(response.statusCode, expected);
+}
+
+async function requestFile(directory: string, path: string): Promise<Response> {
+  return await fetchAndClose(await startServerFiles(directory), path);
 }
 
 async function fetchAndClose(server: Server, path: string): Promise<Response> {
