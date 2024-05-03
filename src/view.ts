@@ -1,3 +1,5 @@
+import {type Calendar, History} from "./unfat.js";
+
 const label = document.createElement('div');
 label.textContent = 'Calories:';
 document.body.appendChild(label);
@@ -12,9 +14,18 @@ caloriesInput.id = 'calories';
 caloriesInput.placeholder = 'calories';
 document.body.appendChild(caloriesInput);
 
+class SameDay implements Calendar {
+  day(): number {
+    return 1;
+  }
+}
+
+const history = new History(new SameDay());
+
 const button = document.createElement('button');
 button.textContent = 'Add meal';
 button.addEventListener('click', () => {
-  preview.textContent = caloriesInput.value;
+  history.addMeal('', parseInt(caloriesInput.value), 100);
+  preview.textContent = history.currentCalories.toString();
 });
 document.body.appendChild(button);

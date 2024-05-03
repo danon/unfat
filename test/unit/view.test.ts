@@ -26,6 +26,20 @@ suite('unit/', () => {
       await browser.close();
       assert.equal(currentCalories, 75);
     });
+
+    test('sum meal calories', async function () {
+      this.timeout(10000);
+      // given
+      const browser = new Browser();
+      await browser.open();
+      await addMealWithCalories(browser, 75);
+      // when
+      await addMealWithCalories(browser, 35);
+      // then
+      const currentCalories = await getCurrentCalories(browser);
+      await browser.close();
+      assert.equal(currentCalories, 110);
+    });
   });
 });
 
