@@ -57,6 +57,14 @@ export function typeName(name: string): Command<void> {
   return execute("document.querySelector('input#name').value = arguments[0];", [name]);
 }
 
+export function getCaloriesInputText(): Command<string> {
+  return execute("return document.querySelector('input#calories').value;", []);
+}
+
+export function getNameInputText(): Command<string> {
+  return execute("return document.querySelector('input#name').value;", []);
+}
+
 export function addMealWithName(name: string): Command<void> {
   return each([
     typeName(name),

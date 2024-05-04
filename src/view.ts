@@ -34,6 +34,8 @@ const button = document.createElement('button');
 button.textContent = 'Add meal';
 button.addEventListener('click', () => {
   history.addMeal(nameInput.value, parseInt(caloriesInput.value), 100);
+  nameInput.value = '';
+  caloriesInput.value = '';
   preview.textContent = history.currentCalories.toString();
 
   const listItem = document.createElement('li');
