@@ -8,8 +8,10 @@ export class Browser {
   private driver: Driver = new Driver(2000);
 
   public async open(): Promise<void> {
-    await this.buildWebpage();
-    this.server = await this.startServer();
+    if (this.server === null) {
+      await this.buildWebpage();
+      this.server = await this.startServer();
+    }
     await this.driver.openPage('http://localhost:' + this.server.port + '/');
   }
 

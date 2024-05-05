@@ -1,10 +1,10 @@
-import {suite, test} from "mocha";
+import {suite, suiteTeardown, test} from "mocha";
 
 import {
   addMealWithCalories,
   addMealWithName,
   assert,
-  browserView,
+  BrowserPage,
   currentCalories,
   getCaloriesInputText,
   getHistoryMeals,
@@ -16,27 +16,31 @@ import {
 
 suite('unit/', () => {
   suite('view', () => {
+    const page = new BrowserPage();
+
+    suiteTeardown(() => page.close());
+
     suite('logic', () => {
       test('zero calories',
-        browserView([
+        page.run([
           assert(currentCalories(), 0),
         ]));
 
       test('show meal calories',
-        browserView([
+        page.run([
           addMealWithCalories(75),
           assert(currentCalories(), 75),
         ]));
 
       test('sum meal calories',
-        browserView([
+        page.run([
           addMealWithCalories(75),
           addMealWithCalories(35),
           assert(currentCalories(), 110),
         ]));
 
       test('show meals history',
-        browserView([
+        page.run([
           addMealWithName('Apple'),
           addMealWithName('Banana'),
           assert(getHistoryMeals(), ['Apple', 'Banana']),
@@ -45,14 +49,14 @@ suite('unit/', () => {
 
     suite('controls', () => {
       test('resets calories text input',
-        browserView([
+        page.run([
           typeCalories('15'),
           submitMeal(),
           assert(getCaloriesInputText(), ''),
         ]));
 
       test('resets name text input',
-        browserView([
+        page.run([
           typeName('Apple'),
           submitMeal(),
           assert(getNameInputText(), ''),

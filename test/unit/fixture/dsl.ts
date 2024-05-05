@@ -5,20 +5,20 @@ import {Browser} from "./browser.js";
 
 type Command<T> = (browser: Browser) => Promise<T>;
 
-export function browserView(commands: Command<void>[]): AsyncFunc {
-  return async function (this: Context): Promise<void> {
-    this.timeout(10000);
-    await executeInBrowser(each(commands));
-  };
-}
+export class BrowserPage {
+  private browser = new Browser();
 
-async function executeInBrowser(command: Command<void>): Promise<void> {
-  const browser = new Browser();
-  await browser.open();
-  try {
-    await command(browser);
-  } finally {
-    await browser.close();
+  public run(commands: Command<void>[]): AsyncFunc {
+    const browser = this.browser;
+    return async function (this: Context): Promise<void> {
+      this.timeout(10000);
+      await browser.open();
+      await each(commands)(browser);
+    };
+  }
+
+  public close(): Promise<void> {
+    return this.browser.close();
   }
 }
 
