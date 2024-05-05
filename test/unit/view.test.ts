@@ -1,6 +1,6 @@
 import {suite, test} from "mocha";
 
-import {addMealWithCalories, assert, browserView, currentCalories} from "./fixture/dsl.js";
+import {addMealWithCalories, addMealWithName, assert, browserView, currentCalories, getHistoryMeals} from "./fixture/dsl.js";
 
 suite('unit/', () => {
   suite('view', () => {
@@ -20,6 +20,13 @@ suite('unit/', () => {
         addMealWithCalories(75),
         addMealWithCalories(35),
         assert(currentCalories(), 110),
+      ]));
+
+    test('show meals history',
+      browserView([
+        addMealWithName('Apple'),
+        addMealWithName('Banana'),
+        assert(getHistoryMeals(), ['Apple', 'Banana']),
       ]));
   });
 });

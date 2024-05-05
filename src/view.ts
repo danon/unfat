@@ -14,6 +14,14 @@ caloriesInput.id = 'calories';
 caloriesInput.placeholder = 'calories';
 document.body.appendChild(caloriesInput);
 
+const nameInput = document.createElement('input');
+nameInput.id = 'name';
+nameInput.placeholder = 'Meal';
+document.body.appendChild(nameInput);
+
+const mealsList = document.createElement('ul');
+document.body.appendChild(mealsList);
+
 class SameDay implements Calendar {
   day(): number {
     return 1;
@@ -25,7 +33,12 @@ const history = new History(new SameDay());
 const button = document.createElement('button');
 button.textContent = 'Add meal';
 button.addEventListener('click', () => {
-  history.addMeal('', parseInt(caloriesInput.value), 100);
+  history.addMeal(nameInput.value, parseInt(caloriesInput.value), 100);
   preview.textContent = history.currentCalories.toString();
+
+  const listItem = document.createElement('li');
+  listItem.textContent = history.meals[history.meals.length - 1].name;
+
+  mealsList.appendChild(listItem);
 });
 document.body.appendChild(button);

@@ -53,6 +53,21 @@ export function addMealWithCalories(calories: number): Command<void> {
   ]);
 }
 
+export function typeName(name: string): Command<void> {
+  return execute("document.querySelector('input#name').value = arguments[0];", [name]);
+}
+
+export function addMealWithName(name: string): Command<void> {
+  return each([
+    typeName(name),
+    submitMeal(),
+  ]);
+}
+
+export function getHistoryMeals(): Command<string[]> {
+  return execute("return Array.from(document.querySelectorAll('ul li')).map(li => li.textContent);", []);
+}
+
 export function assert<T>(command: Command<T>, expected: T): Command<void> {
   return async function (browser: Browser): Promise<void> {
     strict.deepEqual(await command(browser), expected);
