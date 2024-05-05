@@ -1,4 +1,4 @@
-import {Builder, logging, WebDriver} from "selenium-webdriver";
+import {Builder, By, logging, WebDriver} from "selenium-webdriver";
 import {Options} from "selenium-webdriver/chrome.js";
 
 export class Driver {
@@ -58,6 +58,16 @@ export class Driver {
 
   public async execute(javaScript: string, scriptArguments: string[] = []): Promise<unknown> {
     return this.driver.executeScript(javaScript, ...scriptArguments);
+  }
+
+  public async type(cssSelector: string, text: string): Promise<void> {
+    const element = await this.driver.findElement(By.css(cssSelector));
+    await element.sendKeys(text);
+  }
+
+  public async click(cssSelector: string): Promise<void> {
+    const element = await this.driver.findElement(By.css(cssSelector));
+    await element.click();
   }
 
   public async close(): Promise<void> {

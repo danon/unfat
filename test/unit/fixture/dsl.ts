@@ -30,20 +30,20 @@ function each(commands: Command<void>[]): Command<void> {
   };
 }
 
-function execute<T>(javaScript: string, args: string[]): Command<T> {
-  return browser => browser.execute(javaScript, args) as Promise<T>;
+function execute<T>(javaScript: string): Command<T> {
+  return browser => browser.execute(javaScript, []) as Promise<T>;
 }
 
 export function currentCalories(): Command<number> {
-  return execute("return parseInt(document.querySelector('#currentCalories').textContent);", []);
+  return execute("return parseInt(document.querySelector('#currentCalories').textContent);");
 }
 
 export function typeCalories(calories: string): Command<void> {
-  return execute("document.querySelector('input#calories').value = arguments[0];", [calories]);
+  return browser => browser.type('input#calories', calories);
 }
 
 export function submitMeal(): Command<void> {
-  return execute("document.querySelector('button').click();", []);
+  return browser => browser.click('button');
 }
 
 export function addMealWithCalories(calories: number): Command<void> {
@@ -54,15 +54,15 @@ export function addMealWithCalories(calories: number): Command<void> {
 }
 
 export function typeName(name: string): Command<void> {
-  return execute("document.querySelector('input#name').value = arguments[0];", [name]);
+  return browser => browser.type('input#name', name);
 }
 
 export function getCaloriesInputText(): Command<string> {
-  return execute("return document.querySelector('input#calories').value;", []);
+  return execute("return document.querySelector('input#calories').value;");
 }
 
 export function getNameInputText(): Command<string> {
-  return execute("return document.querySelector('input#name').value;", []);
+  return execute("return document.querySelector('input#name').value;");
 }
 
 export function addMealWithName(name: string): Command<void> {
@@ -73,11 +73,11 @@ export function addMealWithName(name: string): Command<void> {
 }
 
 export function getHistoryMealNames(): Command<string[]> {
-  return execute("return Array.from(document.querySelectorAll('ul li p')).map(p => p.textContent);", []);
+  return execute("return Array.from(document.querySelectorAll('ul li p')).map(p => p.textContent);");
 }
 
 export function getHistoryMealEnergies(): Command<number[]> {
-  return execute("return Array.from(document.querySelectorAll('ul li span')).map(span => parseInt(span.textContent));", []);
+  return execute("return Array.from(document.querySelectorAll('ul li span')).map(span => parseInt(span.textContent));");
 }
 
 export function assert<T>(command: Command<T>, expected: T): Command<void> {

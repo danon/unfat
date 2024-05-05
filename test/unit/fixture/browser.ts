@@ -26,6 +26,14 @@ export class Browser {
     return startServerFiles(projectPath('build/'));
   }
 
+  public async type(cssSelector: string, text: string): Promise<void> {
+    await this.driver.type(cssSelector, text);
+  }
+
+  public async click(cssSelector: string): Promise<void> {
+    await this.driver.click(cssSelector);
+  }
+
   public execute(javaScript: string, args: string[]): Promise<unknown> {
     return this.driver.execute(javaScript, args);
   }
