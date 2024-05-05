@@ -38,8 +38,15 @@ button.addEventListener('click', () => {
   caloriesInput.value = '';
   preview.textContent = history.currentCalories.toString();
 
+  const mealName = document.createElement('p');
+  mealName.textContent = history.meals[history.meals.length - 1].name;
+
+  const mealCalories = document.createElement('span');
+  mealCalories.textContent = history.meals[history.meals.length - 1].calories.toString();
+
   const listItem = document.createElement('li');
-  listItem.textContent = history.meals[history.meals.length - 1].name;
+  listItem.appendChild(mealName);
+  listItem.appendChild(mealCalories);
 
   mealsList.appendChild(listItem);
 });

@@ -72,8 +72,12 @@ export function addMealWithName(name: string): Command<void> {
   ]);
 }
 
-export function getHistoryMeals(): Command<string[]> {
-  return execute("return Array.from(document.querySelectorAll('ul li')).map(li => li.textContent);", []);
+export function getHistoryMealNames(): Command<string[]> {
+  return execute("return Array.from(document.querySelectorAll('ul li p')).map(p => p.textContent);", []);
+}
+
+export function getHistoryMealEnergies(): Command<number[]> {
+  return execute("return Array.from(document.querySelectorAll('ul li span')).map(span => parseInt(span.textContent));", []);
 }
 
 export function assert<T>(command: Command<T>, expected: T): Command<void> {

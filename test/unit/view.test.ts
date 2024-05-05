@@ -7,7 +7,8 @@ import {
   BrowserPage,
   currentCalories,
   getCaloriesInputText,
-  getHistoryMeals,
+  getHistoryMealEnergies,
+  getHistoryMealNames,
   getNameInputText,
   submitMeal,
   typeCalories,
@@ -43,7 +44,13 @@ suite('unit/', () => {
         page.run([
           addMealWithName('Apple'),
           addMealWithName('Banana'),
-          assert(getHistoryMeals(), ['Apple', 'Banana']),
+          assert(getHistoryMealNames(), ['Apple', 'Banana']),
+        ]));
+
+      test('show meal with calories history',
+        page.run([
+          addMealWithCalories(85),
+          assert(getHistoryMealEnergies(), [85]),
         ]));
     });
 
