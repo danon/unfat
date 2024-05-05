@@ -1,26 +1,42 @@
-import {type Calendar, History} from "./unfat.js";
+import {createApp, h, reactive} from "vue";
 
-const label = document.createElement('div');
-label.textContent = 'Calories:';
-document.body.appendChild(label);
+import {type Calendar, History, type Meal} from "./unfat.js";
 
-const preview = document.createElement('span');
-preview.textContent = '0';
-preview.id = 'currentCalories';
-label.appendChild(preview);
+const app = createApp(() => {
+  return [
+    h('div', {}, [
+      'Calories: ',
+      h('span', {id: 'currentCalories'}, [view.currentCalories.toString()]),
+    ]),
+    h('input', {
+      placeholder: 'Meal',
+      id: 'name',
+      value: view.mealName,
+      onChange: event => view.mealName = (event.target as HTMLInputElement).value,
+    }),
+    h('input', {
+      placeholder: 'Calories',
+      id: 'calories',
+      value: view.mealCalories,
+      onChange: event => view.mealCalories = (event.target as HTMLInputElement).value,
+    }),
+    h('ul', view.meals.map((meal: Meal) =>
+      h('li', [
+        h('p', [meal.name]),
+        h('span', [meal.calories]),
+      ]))),
+    h('button', {onClick: addMeal}, ['Add meal']),
+  ];
+});
 
-const caloriesInput = document.createElement('input');
-caloriesInput.id = 'calories';
-caloriesInput.placeholder = 'calories';
-document.body.appendChild(caloriesInput);
+const view = reactive({
+  currentCalories: 0,
+  mealName: '',
+  mealCalories: '',
+  meals: <Meal[]>[],
+});
 
-const nameInput = document.createElement('input');
-nameInput.id = 'name';
-nameInput.placeholder = 'Meal';
-document.body.appendChild(nameInput);
-
-const mealsList = document.createElement('ul');
-document.body.appendChild(mealsList);
+app.mount('body');
 
 class SameDay implements Calendar {
   day(): number {
@@ -30,24 +46,10 @@ class SameDay implements Calendar {
 
 const history = new History(new SameDay());
 
-const button = document.createElement('button');
-button.textContent = 'Add meal';
-button.addEventListener('click', () => {
-  history.addMeal(nameInput.value, parseInt(caloriesInput.value), 100);
-  nameInput.value = '';
-  caloriesInput.value = '';
-  preview.textContent = history.currentCalories.toString();
-
-  const mealName = document.createElement('p');
-  mealName.textContent = history.meals[history.meals.length - 1].name;
-
-  const mealCalories = document.createElement('span');
-  mealCalories.textContent = history.meals[history.meals.length - 1].calories.toString();
-
-  const listItem = document.createElement('li');
-  listItem.appendChild(mealName);
-  listItem.appendChild(mealCalories);
-
-  mealsList.appendChild(listItem);
-});
-document.body.appendChild(button);
+function addMeal(): void {
+  history.addMeal(view.mealName, parseInt(view.mealCalories), 100);
+  view.mealName = '';
+  view.mealCalories = '';
+  view.currentCalories = history.currentCalories;
+  view.meals.push(history.meals[history.meals.length - 1]);
+}

@@ -32,7 +32,7 @@ export class History {
   }
 }
 
-interface Meal {
+export interface Meal {
   name: string;
   calories: number;
 }
