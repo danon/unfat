@@ -39,7 +39,7 @@ export class Browser {
   }
 
   public async close(): Promise<void> {
-    this.server!.close(); // intentionally no await
+    this.server?.close(); // intentionally no await
     await this.driver.close();
   }
 }
