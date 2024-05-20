@@ -15,7 +15,7 @@ export class Browser {
       await this.buildWebpage();
       this.server = await this.startServer();
     }
-    await this.driver.openPage('http://localhost:' + this.server.port + '/');
+    await this.reload();
   }
 
   private async buildWebpage(): Promise<void> {
@@ -39,6 +39,10 @@ export class Browser {
 
   public execute(javaScript: string, args: string[]): Promise<unknown> {
     return this.driver!.execute(javaScript, args);
+  }
+
+  public async reload(): Promise<void> {
+    await this.driver!.openPage('http://localhost:' + this.server!.port + '/');
   }
 
   public async close(): Promise<void> {
