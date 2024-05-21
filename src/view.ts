@@ -46,7 +46,8 @@ class SameDay implements Calendar {
 
 class LocalStorage implements Store {
   addMeal(meal: Meal): void {
-    window.localStorage.setItem('meals', JSON.stringify([meal]));
+    window.localStorage.setItem('meals',
+      JSON.stringify([...this.meals(), meal]));
   }
 
   meals(): Meal[] {
