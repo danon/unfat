@@ -1,4 +1,4 @@
-import {suite, suiteTeardown, test} from "mocha";
+import {suite, suiteTeardown, teardown, test} from "mocha";
 
 import {
   addMealWithCalories,
@@ -19,6 +19,7 @@ suite('unit/', () => {
   suite('view', () => {
     const page = new BrowserPage();
 
+    teardown(() => page.reset());
     suiteTeardown(() => page.close());
 
     suite('logic', () => {

@@ -89,3 +89,7 @@ export function assert<T>(command: Command<T>, expected: T): Command<void> {
     strict.deepEqual(await command(browser), expected);
   };
 }
+
+export function reloadPage(): Command<void> {
+  return browser => browser.reload();
+}

@@ -44,16 +44,21 @@ class SameDay implements Calendar {
   }
 }
 
-class NoStore implements Store {
+class LocalStorage implements Store {
   addMeal(meal: Meal): void {
+    window.localStorage.setItem('meals', JSON.stringify([meal]));
   }
 
   meals(): Meal[] {
-    return [];
+    const meals = window.localStorage.getItem('meals');
+    if (meals === null) {
+      return [];
+    }
+    return JSON.parse(meals);
   }
 }
 
-const history = new History(new SameDay(), new NoStore());
+const history = new History(new SameDay(), new LocalStorage());
 
 function addMeal(): void {
   history.addMeal(view.mealName, parseInt(view.mealCalories), 100);
@@ -62,3 +67,5 @@ function addMeal(): void {
   view.currentCalories = history.currentCalories;
   view.meals.push(history.meals[history.meals.length - 1]);
 }
+
+view.meals = [...history.meals];
