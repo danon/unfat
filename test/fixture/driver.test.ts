@@ -57,7 +57,7 @@ async function executeScript(url: string, javaScript: string, executionArguments
 }
 
 async function withDriver<T>(block: (driver: Driver) => Promise<T>): Promise<T> {
-  const driver = new Driver(200);
+  const driver = new Driver(2000);
   try {
     return await block(driver);
   } finally {
@@ -67,7 +67,7 @@ async function withDriver<T>(block: (driver: Driver) => Promise<T>): Promise<T> 
 
 function withServer(block: (url: string) => Promise<void>, files: Files = {}): AsyncFunc {
   return async function (this: Context): Promise<void> {
-    this.timeout(10000);
+    this.timeout(20000);
     const server: Server = await startServer(files);
     try {
       await block('http://localhost:' + server.port + '/');

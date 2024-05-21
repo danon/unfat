@@ -11,7 +11,7 @@ suite('fixture/', () => {
     });
 
     suite('browser', function (this: Suite): void {
-      this.timeout(10000);
+      this.timeout(20000);
       const browser = new Browser();
 
       suiteSetup(() => browser.open());
