@@ -1,6 +1,6 @@
 import {createApp, h, reactive} from "vue";
 
-import {type Calendar, History, type Meal} from "./unfat.js";
+import {type Calendar, History, type Meal, type Store} from "./unfat.js";
 
 const app = createApp(() => {
   return [
@@ -44,7 +44,16 @@ class SameDay implements Calendar {
   }
 }
 
-const history = new History(new SameDay());
+class NoStore implements Store {
+  addMeal(meal: Meal): void {
+  }
+
+  meals(): Meal[] {
+    return [];
+  }
+}
+
+const history = new History(new SameDay(), new NoStore());
 
 function addMeal(): void {
   history.addMeal(view.mealName, parseInt(view.mealCalories), 100);

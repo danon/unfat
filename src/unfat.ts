@@ -2,13 +2,24 @@ export class History {
   public readonly meals: Meal[] = new Array();
   private readonly calories: Map<number, number> = new Map();
 
-  constructor(private calendar: Calendar) {
+  constructor(private calendar: Calendar, private store: Store) {
+    for (const meal of this.store.meals()) {
+      this.meals.push(meal);
+    }
   }
 
   addMeal(name: string, caloriesPer100Grams: number, weight: number): void {
-    const calories = this.mealCalories(weight, caloriesPer100Grams);
-    this.increaseCalories(calories);
-    this.meals.push({name, calories});
+    const meal = this.createMeal(weight, caloriesPer100Grams, name);
+    this.increaseCalories(meal.calories);
+    this.meals.push(meal);
+    this.store.addMeal(meal);
+  }
+
+  private createMeal(weight: number, caloriesPer100Grams: number, name: string): Meal {
+    return {
+      name,
+      calories: this.mealCalories(weight, caloriesPer100Grams),
+    };
   }
 
   private mealCalories(weight: number, caloriesPer100Grams: number): number {
@@ -51,4 +62,9 @@ function average(numbers: number[]): number {
 
 export interface Calendar {
   day(): number;
+}
+
+export interface Store {
+  addMeal(meal: Meal): void;
+  meals(): Meal[];
 }

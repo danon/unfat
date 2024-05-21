@@ -1,14 +1,14 @@
 import {suite, test} from "mocha";
 import {strict as assert} from "node:assert";
 
-import {History} from "../../src/unfat.js";
+import {History, type Meal, type Store} from "../../src/unfat.js";
 import {TestCalendar} from "../fixture/calendar.js";
 
 suite('unit/', () => {
   suite('domain', () => {
     suite('calories', () => {
       function newHistory() {
-        return new History(new TestCalendar());
+        return new History(new TestCalendar(), new TestStore());
       }
 
       test('start', (): void => {
@@ -45,7 +45,7 @@ suite('unit/', () => {
     suite('days', () => {
       function twoDayHistory() {
         const calendar = new TestCalendar();
-        const history = new History(calendar);
+        const history = new History(calendar, new TestStore());
         history.addMeal('apple', 36, 150);
         calendar.nextDay();
         history.addMeal('banana', 70, 250);
@@ -68,7 +68,7 @@ suite('unit/', () => {
     suite('dates', () => {
       test('separate weeks', () => {
         const calendar = new TestCalendar();
-        const history = new History(calendar);
+        const history = new History(calendar, new TestStore());
         caloriesEachDay(history, calendar, [
           122, 121, 123, 121, 123, 121, 123,
           340, 339, 341, 339, 341, 339, 341,
@@ -78,7 +78,7 @@ suite('unit/', () => {
 
       test('not rolling weeks', () => {
         const calendar = new TestCalendar();
-        const history = new History(calendar);
+        const history = new History(calendar, new TestStore());
         caloriesEachDay(history, calendar, [
           122, 121, 123, 121, 123, 121, 123,
           340,
@@ -95,7 +95,7 @@ suite('unit/', () => {
     });
 
     test('meals', () => {
-      const history = new History(new TestCalendar());
+      const history = new History(new TestCalendar(), new TestStore());
       history.addMeal('apple', 52, 50);
       history.addMeal('banana', 70, 150);
       assert.deepEqual(history.meals, [
@@ -103,5 +103,41 @@ suite('unit/', () => {
         {name: 'banana', calories: 105},
       ]);
     });
+
+    suite('persistence', () => {
+      test('store meal', () => {
+        const store = new TestStore();
+        const history = new History(new TestCalendar(), store);
+        history.addMeal('Banana', 70, 100);
+        assert.deepEqual([meal('Banana', 70)], store.meals());
+      });
+
+      test('read meals', () => {
+        const history = new History(new TestCalendar(), storeWithMeal('Apple', 80));
+        assert.deepEqual([meal('Apple', 80)], history.meals);
+      });
+
+      function meal(name: string, calories: number): Meal {
+        return {name, calories};
+      }
+
+      function storeWithMeal(name: string, calories: 80): Store {
+        const store = new TestStore();
+        store.addMeal(meal(name, calories));
+        return store;
+      }
+    });
   });
 });
+
+class TestStore implements Store {
+  private _meals: Meal[] = new Array();
+
+  addMeal(meal: Meal): void {
+    this._meals.push(meal);
+  }
+
+  meals(): Meal[] {
+    return this._meals;
+  }
+}
