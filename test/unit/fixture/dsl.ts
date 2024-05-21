@@ -3,7 +3,7 @@ import {strict} from "node:assert";
 
 import {Browser} from "../../fixture/browser.js";
 
-type Command<T> = (browser: Browser) => Promise<T>;
+export type Command<T> = (browser: Browser) => Promise<T>;
 
 export class BrowserPage {
   private browser = new Browser();
@@ -15,6 +15,10 @@ export class BrowserPage {
       await browser.open();
       await each(commands)(browser);
     };
+  }
+
+  public async reset(): Promise<void> {
+    await this.browser.execute('window.localStorage.clear();', []);
   }
 
   public close(): Promise<void> {
@@ -30,7 +34,7 @@ function each(commands: Command<void>[]): Command<void> {
   };
 }
 
-function execute<T>(javaScript: string): Command<T> {
+export function execute<T>(javaScript: string): Command<T> {
   return browser => browser.execute(javaScript, []) as Promise<T>;
 }
 
