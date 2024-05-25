@@ -5,9 +5,12 @@ import {typescriptInWebpage} from "./typescript.js";
 
 export class Browser {
   private server: Server|null = null;
-  private driver: Driver = new Driver(2000);
+  private driver: Driver|null = null;
 
   public async open(): Promise<void> {
+    if (this.driver === null) {
+      this.driver = new Driver(2000);
+    }
     if (this.server === null) {
       await this.buildWebpage();
       this.server = await this.startServer();
@@ -27,19 +30,21 @@ export class Browser {
   }
 
   public async type(cssSelector: string, text: string): Promise<void> {
-    await this.driver.type(cssSelector, text);
+    await this.driver!.type(cssSelector, text);
   }
 
   public async click(cssSelector: string): Promise<void> {
-    await this.driver.click(cssSelector);
+    await this.driver!.click(cssSelector);
   }
 
   public execute(javaScript: string, args: string[]): Promise<unknown> {
-    return this.driver.execute(javaScript, args);
+    return this.driver!.execute(javaScript, args);
   }
 
   public async close(): Promise<void> {
-    this.server?.close(); // intentionally no await
-    await this.driver.close();
+    await Promise.all([
+      this.server?.close(),
+      this.driver?.close(),
+    ]);
   }
 }
