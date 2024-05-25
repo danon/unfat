@@ -13,7 +13,7 @@ export async function typescriptInWebpage(fileName: string, outputDirectory: str
     output: {path: outputDirectory},
     resolve: {extensionAlias: {'.js': ['.js', '.ts']}},
     plugins: [
-      new HtmlWebpackPlugin({templateContent: ''}),
+      new HtmlWebpackPlugin({templateContent: '<script src="https://cdn.tailwindcss.com"></script>'}),
     ],
     module: {
       rules: [

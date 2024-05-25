@@ -30,9 +30,9 @@ export class Driver {
   private async navigateTo(url: string) {
     try {
       await this.driver.get(url);
-    } catch (error: unknown) {
+    } catch (throwable: unknown) {
       await this.driver.quit();
-      // @ts-ignore
+      const error = throwable as Error;
       if (error.message.startsWith('timeout: Timed out receiving message from renderer')) {
         throw new Error('timeout');
       }
@@ -50,6 +50,9 @@ export class Driver {
     const entries = await this.driver.manage().logs().get(logging.Type.BROWSER);
     entries.forEach(entry => {
       if (entry.message.includes('the server responded with a status of 404')) {
+        return;
+      }
+      if (entry.message.includes('cdn.tailwindcss.com should not be used in production.')) {
         return;
       }
       throw new Error(entry.message);
