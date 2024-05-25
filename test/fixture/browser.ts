@@ -1,7 +1,7 @@
-import {Driver} from "../../fixture/driver.js";
-import {type Server, startServerFiles} from "../../fixture/httpServer.js";
-import {projectPath} from "../../fixture/project.js";
-import {typescriptInWebpage} from "../../fixture/typescript.js";
+import {Driver} from "./driver.js";
+import {type Server, startServerFiles} from "./httpServer.js";
+import {projectPath} from "./project.js";
+import {typescriptInWebpage} from "./typescript.js";
 
 export class Browser {
   private server: Server|null = null;

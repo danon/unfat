@@ -1,7 +1,7 @@
 import type {AsyncFunc, Context} from "mocha";
 import {strict} from "node:assert";
 
-import {Browser} from "./browser.js";
+import {Browser} from "../../fixture/browser.js";
 
 type Command<T> = (browser: Browser) => Promise<T>;
 
