@@ -5,6 +5,7 @@
     "@riddled/mocha-rebase-suite"
   ],
   "spec": [
+    "test/unit/_page.ts",
     "test/**/*.test.ts"
   ]
 }

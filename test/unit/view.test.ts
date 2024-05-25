@@ -1,10 +1,11 @@
-import {suite, suiteTeardown, teardown, test} from "mocha";
+import {suite, teardown, test} from "mocha";
+
+import {page} from "./_page.js";
 
 import {
   addMealWithCalories,
   addMealWithName,
   assert,
-  BrowserPage,
   currentCalories,
   getCaloriesInputText,
   getHistoryMealEnergies,
@@ -17,10 +18,7 @@ import {
 
 suite('unit/', () => {
   suite('view', () => {
-    const page = new BrowserPage();
-
     teardown(() => page.reset());
-    suiteTeardown(() => page.close());
 
     suite('logic', () => {
       test('zero calories',
